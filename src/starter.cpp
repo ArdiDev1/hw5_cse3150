@@ -130,7 +130,17 @@ bool move_left(std::vector<std::vector<int>>& board) {
 // TODO: Implement move_right (hint: reverse, compress, merge, reverse)
 bool move_right(std::vector<std::vector<int>>& board) {
     bool moved = false;
-    // TODO: Similar to move_left but with reversal
+    // TODO: Similar to move_left but with reversal of rows
+     for (int r = 0; r < 4; r++) {
+        std::vector<int> reversed_row = board[r];
+        std::reverse(reversed_row.begin(), reversed_row.end());
+        std::vector<int> merged = merge_row(compress_row(reversed_row));
+        std::reverse(merged.begin(), merged.end());
+        if (merged != board[r]) {
+            board[r] = merged;
+            moved = true;
+        }
+    }
     return moved;
 }
 
