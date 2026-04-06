@@ -18,17 +18,27 @@ int compute_score(const std::vector<std::vector<int>>& board);
 // TODO: Compress a row: remove zeros, pad with zeros at the end
 std::vector<int> compress_row(const std::vector<int>& row) {
     // TODO: Use copy_if to filter non-zero values, then pad with zeros
-    return row;
+    std::vector<int> compressed;
+        std::copy_if(row.begin(), row.end(), std::back_inserter(compressed), [](int val) {
+            return val != 0;
+    }); 
+
+    compressed.resize(4, 0);
+    return compressed;
 }
 
 // TODO: Merge a row (assumes already compressed)
 std::vector<int> merge_row(std::vector<int> row) {
     // TODO: Implement merging logic - combine adjacent equal tiles
+    for (int i = 0; i < 3; i++) {
+        if (row[i] != 0 && row[i] == row[i + 1]) {
+            row[i] *= 2;
+            row[i + 1] = 0;
+            i++;         
+        }
+    }
     return row;
 }
-
-
-
 
 void write_board_csv(const vector<vector<int>>& board, bool first, const string& stage) {
     ios_base::openmode mode = ios::app;
@@ -106,10 +116,14 @@ void spawn_tile(std::vector<std::vector<int>>& board) {
 // TODO: Implement move_left using compress_row and merge_row
 bool move_left(std::vector<std::vector<int>>& board) {
     bool moved = false;
-    // TODO: For each row:
-    //   1. Compress the row (remove zeros)
-    //   2. Merge adjacent equal tiles
-    //   3. Check if the row changed
+    for (int r = 0; r < 4; r++) {
+        std::vector<int> compressed = compress_row(board[r]);
+        std::vector<int> merged = merge_row(compressed);
+        if (merged != board[r]) {
+            board[r] = merged;
+            moved = true;
+        }
+    }
     return moved;
 }
 
